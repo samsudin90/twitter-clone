@@ -14,10 +14,10 @@ const UserBio : React.FC<userBioProps> = ({userId}) => {
     const {data : fetchedUser} = useUser(userId)
 
     const createdAt = useMemo(() => {
-        if(!fetchedUser?.createdAt) {
+        if(!fetchedUser?.data?.createdAt) {
             return null
         }
-        return format(new Date(fetchedUser.createdAt), 'MMMM yyyy')
+        return format(new Date(fetchedUser.data.createdAt), 'MMMM yyyy')
     }, [fetchedUser?.createdAt])
     return (
         <div className="border-b-[1px] pb-4 border-neutral-800">
