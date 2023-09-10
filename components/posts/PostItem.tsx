@@ -4,7 +4,8 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 import Avatar from "../Avatar";
-import { AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
+import useLike from "@/hooks/useLike";
 
 interface PostItemProps {
     userId?: string;
@@ -15,13 +16,14 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
     const router = useRouter()
     const loginModal = useLoginModal()
 
-    const { data: currentUser } = useCurrentUser()
+    const {data: currentUser} = useCurrentUser()
+    const {hasLiked, toglleLike} = useLike({postId : data.id, userId: userId || ''})
 
     const goToUser = useCallback((e: any) => {
         e.stopPropagation()
 
-        router.push(`/users/${data.user.id}`)
-    }, [router, data.user.id])
+        router.push(`/users/${data?.user?.id}`)
+    }, [router, data?.user?.id])
 
     const goToPost = useCallback((e: any) => {
         e.stopPropagation()
@@ -32,8 +34,12 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
     const onLike = useCallback((e: any) => {
         e.stopPropagation()
 
-        loginModal.onOpen()
-    }, [loginModal])
+        if(!currentUser) {
+            return loginModal.onOpen()
+        }
+
+        toglleLike()
+    }, [loginModal, toglleLike, currentUser])
 
     const createdAt = useMemo(() => {
         if (!data?.createdAt) {
@@ -42,6 +48,8 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
 
         return formatDistanceToNowStrict(new Date(data.createdAt))
     }, [data?.createdAt])
+
+    const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart
 
     return (
         <div
@@ -55,7 +63,7 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
         transition
       ">
             <div className="flex flex-row items-start gap-3">
-                <Avatar userId={data.user.id} />
+                <Avatar userId={data?.user?.id} />
                 <div>
                     <div className="flex flex-row items-center gap-2">
                         <p
@@ -66,7 +74,7 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
                 cursor-pointer 
                 hover:underline
             ">
-                            {data.user.name}
+                            {data?.user?.name}
                         </p>
                         <span
                             onClick={goToUser}
@@ -77,7 +85,7 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
                 hidden
                 md:block
             ">
-                            @{data.user.username}
+                            @{data?.user?.username}
                         </span>
                         <span className="text-neutral-500 text-sm">
                             {createdAt}
@@ -100,7 +108,7 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
             ">
                             <AiOutlineMessage size={20} />
                             <p>
-                                {data.comments?.length || 0}
+                                {data?.comments?.length || 0}
                             </p>
                         </div>
                         <div
@@ -115,10 +123,9 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
                 transition 
                 hover:text-red-500
             ">
-                            {/* <LikeIcon color={hasLiked ? 'red' : ''} size={20} /> */}
-                            <AiOutlineHeart size={20} />
+                            <LikeIcon color={hasLiked ? 'red' : ''} size={20} />
                             <p>
-                                {data.likeIds.length}
+                                {data?.likeIds?.length}
                             </p>
                         </div>
                     </div>
