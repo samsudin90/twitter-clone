@@ -6,7 +6,7 @@ import useUser from "@/hooks/useUser"
 import { useRouter } from "next/router"
 import {ClipLoader} from 'react-spinners'
 
-const userView = () => {
+const UserView = () => {
     const router = useRouter()
     const {userId} = router.query
 
@@ -29,4 +29,4 @@ const userView = () => {
     )
 }
 
-export default userView
+export default UserView

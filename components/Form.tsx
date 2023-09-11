@@ -85,7 +85,7 @@ const Form: React.FC<FormProps> = ({ placeholder, isCommnet, postId }) => {
                 </div>
             ) : (
                 <div className="py-8">
-                    <h1 className="text-white text-2xl text-center mb-4 font-bold">Welcome to Twitter</h1>
+                    <h1 className="text-white text-2xl text-center mb-4 font-bold">Welcome to Litter</h1>
                     <div className="flex flex-row items-center justify-center gap-4">
                         <Button label="Register" onClick={registerModal.onOpen} />
                     </div>

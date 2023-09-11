@@ -23,7 +23,7 @@ const UserBio : React.FC<userBioProps> = ({userId}) => {
             return null
         }
         return format(new Date(fetchedUser.data.createdAt), 'MMMM yyyy')
-    }, [fetchedUser?.createdAt])
+    }, [fetchedUser?.data?.createdAt])
     return (
         <div className="border-b-[1px] pb-4 border-neutral-800">
             <div className="flex justify-end p-2">
