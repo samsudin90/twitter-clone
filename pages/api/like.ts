@@ -30,6 +30,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (req.method === 'POST') {
             updatedLikeIds.push(currentUser.id)
+
+            try {
+                const post = await prisma.post.findUnique({
+                    where : {
+                        id : postId
+                    }
+                })
+
+                if(post?.userId) {
+                    await prisma.notificaiton.create({
+                        data : {
+                            body : 'someone like youre tweet',
+                            userId : post.userId
+                        }
+                    })
+
+                    await prisma.user.update({
+                        where : {
+                            id : post.userId
+                        },
+                        data : {
+                            hasNotification : true
+                         }
+                    })
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
         }
 
         if(req.method === 'DELETE') {
