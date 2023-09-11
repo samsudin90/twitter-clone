@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import Button from "./Button";
 import Avatar from "./Avatar";
+import usePost from "@/hooks/usePost";
 
 interface FormProps {
     placeholder: string;
@@ -17,7 +18,8 @@ const Form: React.FC<FormProps> = ({ placeholder, isCommnet, postId }) => {
     const registerModal = useRegisterModal()
 
     const { data: currentUser } = useCurrentUser()
-    const { mutate: mutatedPost } = usePosts()
+    const { mutate: mutatedPosts } = usePosts()
+    const {mutate : mutatedPost} = usePost(postId as string) 
 
     const [body, setBody] = useState('')
     const [isLoading, setIsloading] = useState(false)
@@ -26,16 +28,19 @@ const Form: React.FC<FormProps> = ({ placeholder, isCommnet, postId }) => {
         try {
             setIsloading(true)
 
-            await axios.post('/api/posts', { body })
+            const url = isCommnet ? `/api/comments?postId=${postId}` : '/api/posts'
+
+            await axios.post(url, { body })
             toast.success('tweet created')
             setBody('')
+            mutatedPosts()
             mutatedPost()
         } catch (error) {
             toast.error('something when wrong')
         } finally {
             setIsloading(false)
         }
-    }, [body, mutatedPost])
+    }, [body, mutatedPosts, isCommnet, postId, mutatedPost])
 
     return (
         <div className="border-b-[1px] border-neutral-800 px-5 py-2">
